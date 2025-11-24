@@ -1,24 +1,30 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
-
+    private CharacterController controller;
     private Vector3 startPos;
+    private Quaternion startRo;
     public float movespeed;
-    public Rigidbody rb;
-    private bool movementIsEnabled = true;
     private bool isGrounded;
 
-    private Vector3 forward;
-    private Vector3 up;
 
-    public GameObject player;
+    private Vector3 targetFace;
+
+    
+
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
+        controller = GetComponent<CharacterController>();
+        
  
     }
 
@@ -34,27 +40,49 @@ public class PlayerController : MonoBehaviour
 
     void PlayerInput()
     {
+        float verticalInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxis("Horizontal");
+        
+       
+        Vector3 moveForward = transform.forward * verticalInput * movespeed;
+        Vector3 moveBackwards = transform.forward * verticalInput * movespeed;
+        Vector3 moveRight = transform.right * horizontalInput * movespeed;
+        Vector3 moveLeft = transform.right * horizontalInput * movespeed;
+
+
+ 
         if (Input.GetKey(KeyCode.W))
         {
-            rb.AddForce(Vector3.forward * movespeed);
+            controller.SimpleMove(moveForward);
+
+            
         }
+
         if (Input.GetKey(KeyCode.D))
         {
-            rb.AddForce(Vector3.right * movespeed);
+            controller.SimpleMove(moveRight);
+
         }
         if (Input.GetKey(KeyCode.A))
         {
-            rb.AddForce(Vector3.left * movespeed);
+            controller.SimpleMove(moveLeft);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            rb.AddForce(Vector3.back * movespeed);
+            controller.SimpleMove(moveBackwards);
+        }
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            transform.rotation *= Quaternion.Euler(0, -2, 0);
         }
 
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            transform.rotation = Quaternion.Euler(1, 0, 0);
+            transform.rotation *= Quaternion.Euler(0, 2, 0);
         }
 
+
+        
     }
 }
