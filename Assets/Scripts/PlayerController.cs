@@ -10,7 +10,10 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Vector3 startPos;
     private Quaternion startRo;
+    public float minMoveSpeed;
     public float movespeed;
+    private Vector3 forwardAcceleration;
+   
     private bool isGrounded;
 
 
@@ -31,7 +34,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        forwardAcceleration = Vector3.MoveTowards(Vector3.zero, transform.forward, movespeed);
     }
     private void FixedUpdate()
     {
@@ -43,33 +46,28 @@ public class PlayerController : MonoBehaviour
         float verticalInput = Input.GetAxis("Vertical");
         float horizontalInput = Input.GetAxis("Horizontal");
         
-       
-        Vector3 moveForward = transform.forward * verticalInput * movespeed;
-        Vector3 moveBackwards = transform.forward * verticalInput * movespeed;
-        Vector3 moveRight = transform.right * horizontalInput * movespeed;
-        Vector3 moveLeft = transform.right * horizontalInput * movespeed;
 
 
  
         if (Input.GetKey(KeyCode.W))
         {
-            controller.SimpleMove(moveForward);
+            controller.SimpleMove(transform.forward * movespeed);
 
             
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            controller.SimpleMove(moveRight);
+            controller.SimpleMove(transform.right * movespeed);
 
         }
         if (Input.GetKey(KeyCode.A))
         {
-            controller.SimpleMove(moveLeft);
+            controller.SimpleMove(-transform.right * movespeed );
         }
         if (Input.GetKey(KeyCode.S))
         {
-            controller.SimpleMove(moveBackwards);
+            controller.SimpleMove(-transform.forward * movespeed);
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
@@ -82,7 +80,7 @@ public class PlayerController : MonoBehaviour
             transform.rotation *= Quaternion.Euler(0, 2, 0);
         }
 
-
+        
         
     }
 }
