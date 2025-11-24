@@ -660,7 +660,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba309c9a1374eef46951960f159fddea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movespeed: 5
+  BaseSpeed: 0
+  MaxSpeed: 5
+  movespeed: 3
+  acceleration: 3
+  deceleration: 4
 --- !u!143 &2010729759
 CharacterController:
   m_ObjectHideFlags: 0

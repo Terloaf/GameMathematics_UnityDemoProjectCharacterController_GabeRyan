@@ -10,9 +10,12 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Vector3 startPos;
     private Quaternion startRo;
-    public float minMoveSpeed;
+    public float BaseSpeed;
+    public float MaxSpeed;
     public float movespeed;
-    private Vector3 forwardAcceleration;
+    public float acceleration;
+    public float deceleration;
+    private float speed;
    
     private bool isGrounded;
 
@@ -25,7 +28,7 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        
         controller = GetComponent<CharacterController>();
         
  
@@ -34,7 +37,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        forwardAcceleration = Vector3.MoveTowards(Vector3.zero, transform.forward, movespeed);
+        
+        
     }
     private void FixedUpdate()
     {
@@ -45,42 +49,54 @@ public class PlayerController : MonoBehaviour
     {
         float verticalInput = Input.GetAxis("Vertical");
         float horizontalInput = Input.GetAxis("Horizontal");
-        
 
 
- 
-        if (Input.GetKey(KeyCode.W))
+        if (Input.anyKey == true)
         {
-            controller.SimpleMove(transform.forward * movespeed);
+            speed = Mathf.MoveTowards(speed, MaxSpeed, acceleration * Time.deltaTime);
 
-            
+            if (Input.GetKey(KeyCode.W))
+            {
+
+                controller.SimpleMove(transform.forward * speed);
+
+
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+
+                controller.SimpleMove(transform.right * speed);
+
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+
+                controller.SimpleMove(-transform.right * speed);
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+
+                controller.SimpleMove(-transform.forward * speed);
+            }
+
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+
+                transform.rotation *= Quaternion.Euler(0, -2, 0);
+            }
+
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+
+                transform.rotation *= Quaternion.Euler(0, 2, 0);
+            }
+
+           
         }
 
-        if (Input.GetKey(KeyCode.D))
-        {
-            controller.SimpleMove(transform.right * movespeed);
+      
 
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            controller.SimpleMove(-transform.right * movespeed );
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            controller.SimpleMove(-transform.forward * movespeed);
-        }
 
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            transform.rotation *= Quaternion.Euler(0, -2, 0);
-        }
-
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            transform.rotation *= Quaternion.Euler(0, 2, 0);
-        }
-
-        
         
     }
 }
