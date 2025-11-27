@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
@@ -12,15 +13,29 @@ public class PlayerController : MonoBehaviour
     private Quaternion startRo;
     public float BaseSpeed;
     public float MaxSpeed;
-    public float movespeed;
     public float acceleration;
     public float deceleration;
-    private float speed;
-   
-    private bool isGrounded;
+    private float MoveSpeed;
+    public float SprintSpeed;
+    public Vector3 velocity;
+
+    public float JumpSpeed;
+    private float ySpeed;
+    public float gravity;
+    private float JumpMuliplier = -2f;
 
 
-    private Vector3 targetFace;
+
+    public Transform Crouch;
+    
+
+    private Vector3 ControllerInput;
+    private Vector3 MovementDirection;
+    
+
+    private bool Sprintable;
+
+
 
     
 
@@ -37,8 +52,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        
+
     }
     private void FixedUpdate()
     {
@@ -47,56 +61,68 @@ public class PlayerController : MonoBehaviour
 
     void PlayerInput()
     {
-        float verticalInput = Input.GetAxis("Vertical");
-        float horizontalInput = Input.GetAxis("Horizontal");
+       
+        transform.localScale = Vector3.one;
+        Sprintable = true;
 
-
-        if (Input.anyKey == true)
+        if(ControllerInput != Vector3.zero)
         {
-            speed = Mathf.MoveTowards(speed, MaxSpeed, acceleration * Time.deltaTime);
+            MovementDirection = ControllerInput;
+        }
+        ControllerInput = Vector3.zero;
 
-            if (Input.GetKey(KeyCode.W))
-            {
+        if (Input.GetKey(KeyCode.W))
+        {
+            MoveSpeed = Mathf.MoveTowards(MoveSpeed, MaxSpeed, acceleration * Time.deltaTime);
 
-                controller.SimpleMove(transform.forward * speed);
+            ControllerInput += transform.forward;
 
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            MoveSpeed = Mathf.MoveTowards(MoveSpeed, MaxSpeed, acceleration * Time.deltaTime);
 
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-
-                controller.SimpleMove(transform.right * speed);
-
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-
-                controller.SimpleMove(-transform.right * speed);
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-
-                controller.SimpleMove(-transform.forward * speed);
-            }
-
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-
-                transform.rotation *= Quaternion.Euler(0, -2, 0);
-            }
-
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-
-                transform.rotation *= Quaternion.Euler(0, 2, 0);
-            }
-
-           
+            ControllerInput += transform.right;
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            MoveSpeed = Mathf.MoveTowards(MoveSpeed, MaxSpeed, acceleration * Time.deltaTime);
+            ControllerInput += -transform.right;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            MoveSpeed = Mathf.MoveTowards(MoveSpeed, MaxSpeed, acceleration * Time.deltaTime);
+            ControllerInput += -transform.forward;
         }
 
-      
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            
+            transform.localScale = Crouch.localScale;
+            Sprintable = false;
+
+        }
+
+       
+        if (Input.GetKey(KeyCode.LeftShift) && Sprintable == true)
+        {
+            ControllerInput *= SprintSpeed;
+        }
+
+        controller.SimpleMove(ControllerInput * MoveSpeed);
+
+        if (ControllerInput == Vector3.zero)
+        {
+            MoveSpeed = Mathf.MoveTowards(MoveSpeed, BaseSpeed, deceleration * Time.deltaTime);
+            controller.SimpleMove(MovementDirection * MoveSpeed);
+        }
+
+        if (Input.GetKey(KeyCode.Space) && controller.isGrounded)
+        {
+            ySpeed = JumpSpeed * JumpMuliplier * gravity;
+            controller.Move(new Vector3(0, ySpeed, 0));
+        }
 
 
-        
     }
 }
