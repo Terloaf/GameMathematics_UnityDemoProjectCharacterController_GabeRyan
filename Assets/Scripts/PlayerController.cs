@@ -11,24 +11,24 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Vector3 startPos;
     private Quaternion startRo;
+    //movement values
     public float BaseSpeed;
     public float MaxSpeed;
     public float acceleration;
     public float deceleration;
     private float MoveSpeed;
     public float SprintSpeed;
-    public Vector3 velocity;
-
+    //Jump Values
     public float JumpSpeed;
     private float ySpeed;
     public float gravity;
     private float JumpMuliplier = -2f;
 
 
-
+    //Crouch transform
     public Transform Crouch;
     
-
+    //Vectors
     private Vector3 ControllerInput;
     private Vector3 MovementDirection;
     
@@ -61,10 +61,12 @@ public class PlayerController : MonoBehaviour
 
     void PlayerInput()
     {
-       
+       //resets players scales to its original value
         transform.localScale = Vector3.one;
+        // Checks if you can sprint
         Sprintable = true;
 
+        // checks if player is inputting
         if(ControllerInput != Vector3.zero)
         {
             MovementDirection = ControllerInput;
@@ -116,7 +118,7 @@ public class PlayerController : MonoBehaviour
             MoveSpeed = Mathf.MoveTowards(MoveSpeed, BaseSpeed, deceleration * Time.deltaTime);
             controller.SimpleMove(MovementDirection * MoveSpeed);
         }
-
+        // checks if player is grounded and inputs a jump
         if (Input.GetKey(KeyCode.Space) && controller.isGrounded)
         {
             ySpeed = JumpSpeed * JumpMuliplier * gravity;
